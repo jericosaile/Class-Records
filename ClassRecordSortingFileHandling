@@ -1,0 +1,480 @@
+//Class Record with sorting ID and totalscore and file handling
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <unistd.h>
+#include <algorithm>
+
+using namespace std;
+
+
+string i, n, g, tempName;
+float quiz1, quiz2, mid, f, t, average, total;
+
+
+class Student{	//class Definition Student
+	private:
+		string id, name, gender;
+		float quizOne, quizTwo, midTerm, final, total, ave;
+	public:
+		void setInfo(string i, string n, string g, float quiz1, float quiz2, float mid, float f, float t){
+			id = i;
+			name = n;
+			gender = g;
+			quizOne = quiz1;
+			quizTwo = quiz2;
+			midTerm = mid;
+			final = f;
+			total = t;
+		}
+		void setUpdate(float score1, float score2, float score3, float score4, float totalScore){
+			quizOne = score1;
+			quizTwo = score2;
+			midTerm = score3;
+			final = score4;
+			total = totalScore;
+		}
+		string getId(){
+			return id;
+		}
+		string getName(){
+			return name;
+		}
+		string getGender(){
+			return gender;
+		}
+		float getQuizOne(){
+			return quizOne;
+		}
+		float getQuizTwo(){
+			return quizTwo;
+		}
+		float getMidterm(){
+			return midTerm;
+		}
+		float getFinal(){
+			return final;
+		}
+		float getTotal(){
+			return total;
+		}
+		float getAverage(){
+			ave=(quizOne+quizTwo+midTerm+final)/4;
+			return ave;
+		}
+		void displayInfo(){
+			cout<<"Name: "<<name<<endl;
+			cout<<"Student ID: "<<id<<endl;
+			cout<<"Gender: "<<gender<<endl;
+			cout<<"First Quiz score: "<<quizOne<<endl;
+			cout<<"Second Quiz score: "<<quizTwo<<endl;
+			cout<<"Midterm score: "<<midTerm<<endl;
+			cout<<"Final score: "<<final<<endl;
+		}
+		void displayTotal(){
+			cout<<"Total score: "<<total<<endl;
+			cout<<"=========================================="<<endl;
+		}
+		bool operator<(Student sortId)const{
+			return (id<sortId.id);
+		}
+		bool operator<(Student sortTotal){
+			return (total>sortTotal.total);
+		}
+};
+
+
+Student info;
+vector<Student>myStudent;
+void homeView();
+char select();
+void statement();
+void selectOne();
+void selectTwo();
+void selectThree();
+void selectFour();
+void selectFive();
+void selectSix();
+void selectSeven();
+void selectEight();
+void selectNine();
+void fileStore();
+void noStudent();
+void invalid();
+
+
+int main(){
+	statement();
+	fileStore();
+	return 0;
+}
+
+
+void homeView(){	//Home View
+	cout<<"=================================================="<<endl;
+	cout<<"                       Menu                       "<<endl;
+	cout<<"==================================================="<<endl;
+	cout<<"	1. Add student records									"<<endl;
+	cout<<"	2. Delete student records								"<<endl;
+	cout<<"	3. Update student records								"<<endl;
+	cout<<"	4. View all student records								"<<endl;
+	cout<<"	5. Calculate an average of a selected student's scores	"<<endl;
+	cout<<"	6. Calculate total scores of a selected student			"<<endl;
+	cout<<"	7. Display the highest and lowest scores				"<<endl;
+	cout<<"	8. Sort student's records by ID							"<<endl;
+	cout<<"	9. Sort student's records by total score				"<<endl;
+}
+
+
+char select(){	//Selection
+	char choice;
+	cout<<"Enter your choice: ";
+	cin>>choice;
+	cout<<endl;
+	system("CLS");
+	return choice;
+}
+
+
+void statement(){	//Conditions
+	Student info;
+	char selected;
+	do{
+		homeView();
+		selected=select();
+		switch(selected){
+			case '1':
+				selectOne();
+				break;
+			case '2':
+				selectTwo();
+				break;
+			case '3':
+				selectThree();
+				break;
+			case '4':
+				selectFour();
+				break;
+			case '5':
+				selectFive();
+				break;
+			case '6':
+				selectSix();
+				break;
+			case '7':
+				selectSeven();
+				break;
+			case '8':
+				selectEight();
+				break;
+			case '9':
+				selectNine();
+				break;
+			default:
+				cout<<"Records has been save to file"<<endl;
+		}
+	}while(selected=='1'||selected=='2'||selected=='3'||
+	selected=='4'||selected=='5'||
+	selected=='6'||selected=='7'||
+	selected=='8'||selected=='9');
+}
+
+
+void selectOne(){	//Add student records
+	string a;
+	do{
+		cout<<"Enter ID: ";
+		cin>>i;
+		for(int s=0; s<myStudent.size(); s++){
+			if(i==myStudent[s].getId()){
+				cout<<"This Student ID was already been recorded"<<endl;
+				a=myStudent[s].getId();
+			}
+		}
+	}while(i==a);
+	cout<<"Enter Name: ";
+	cin>>n;
+	do{
+		cout<<"Enter Gender[male/female]: ";
+		cin>>g;
+		if(g=="Male"||g=="male"||g=="MALE")
+			break;
+		else if(g=="Female"||g=="female"||g=="FEMALE")
+			break;
+		else
+			cout<<"Invalid Gender Type(male or female)"<<endl;
+	}while(g!="Male"||g!="male"||g!="MALE"||g!="Female"||g!="female"||g!="FEMALE");
+	cout<<"Enter First Quiz Score: ";
+	cin>>quiz1;
+	cout<<"Enter Second Quiz Score: ";
+	cin>>quiz2;
+	cout<<"Enter Midterm Score: ";
+	cin>>mid;
+	cout<<"Enter Final Score: ";
+	cin>>f;
+	t=quiz1+quiz2+mid+f;
+	info.setInfo(i, n, g, quiz1, quiz2, mid, f, t);
+	myStudent.push_back(info);
+}
+
+
+void selectTwo(){	//Delete student records
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		string a;
+		int ns;
+		do{
+			cout<<"Enter the Student ID: ";
+			cin>>i;
+			for(int s=0; s<myStudent.size(); ++s){
+				if(myStudent[s].getId()==i){
+					a=myStudent[s].getId();
+					ns=s;
+					break;
+				}
+			}
+			if(i!=a){
+				system("CLS");
+				invalid();
+			}
+		}while(i!=a);
+		if(myStudent[ns].getId()==i){
+			tempName=myStudent[ns].getName();
+			myStudent.erase(myStudent.begin()+ns);
+			cout<<tempName<<" is successfully delete from the records"<<endl;
+		}
+	}
+}
+
+
+void selectThree(){	//Update student records
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		string a;
+		int ns;
+		do{
+			cout<<"Enter the Student ID: ";
+			cin>>i;
+			for(int s=0; s<myStudent.size(); ++s){
+				if(myStudent[s].getId()==i){
+					a=myStudent[s].getId();
+					ns=s;
+					break;
+				}
+			}
+			if(i!=a){
+				system("CLS");
+				invalid();
+			}
+		}while(i!=a);
+		if(myStudent[ns].getId()==i){
+			tempName=myStudent[ns].getName();
+			cout<<"You selected student name "<<tempName<<endl;
+			cout<<"Enter the Updated first Quiz score: ";
+			cin>>quiz1;
+			cout<<"Enter the Updated Second Quiz score: ";
+			cin>>quiz2;
+			cout<<"Enter the Updated Midterm score: ";
+			cin>>mid;
+			cout<<"Enter the Updated Final score: ";
+			cin>>f;
+			t=quiz1+quiz2+mid+f;
+			myStudent[ns].setUpdate(quiz1, quiz2, mid, f, t);
+		}
+	}
+}
+
+
+void selectFour(){	//View all student records
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		for(int s=0;s<myStudent.size();s++){
+			myStudent[s].displayInfo();
+			myStudent[s].displayTotal();
+		}
+	}
+}
+
+
+void selectFive(){	//Calculate an average of a selected student’s scores
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		string a;
+		int ns;
+		do{
+			cout<<"Enter the Student ID: ";
+			cin>>i;
+			for(int s=0; s<myStudent.size(); ++s){
+				if(myStudent[s].getId()==i){
+					a=myStudent[s].getId();
+					ns=s;
+					break;
+				}
+			}
+			if(i!=a){
+				system("CLS");
+				invalid();
+			}
+		}while(i!=a);
+		if(myStudent[ns].getId()==i){
+			tempName=myStudent[ns].getName();
+			cout<<"You selected student name "<<tempName<<endl;
+			quiz1=myStudent[ns].getQuizOne();
+			quiz2=myStudent[ns].getQuizTwo();
+			mid=myStudent[ns].getMidterm();
+			f=myStudent[ns].getFinal();
+			average=(quiz1+quiz2+mid+f)/4;
+			cout<<"The average score of student name "<<tempName<<" is "<<average<<endl;
+		}
+	}
+}
+
+
+void selectSix(){	//Calculate total scores of a selected student
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		string a;
+		int ns;
+		do{
+			cout<<"Enter the Student ID: ";
+			cin>>i;
+			for(int s=0; s<myStudent.size(); ++s){
+				if(myStudent[s].getId()==i){
+					a=myStudent[s].getId();
+					ns=s;
+					break;
+				}
+			}
+			if(i!=a){
+				system("CLS");
+				invalid();
+			}
+		}while(i!=a);
+		if(myStudent[ns].getId()==i){
+			tempName=myStudent[ns].getName();
+			cout<<"You selected student name "<<tempName<<endl;
+			quiz1=myStudent[ns].getQuizOne();
+			quiz2=myStudent[ns].getQuizTwo();
+			mid=myStudent[ns].getMidterm();
+			f=myStudent[ns].getFinal();
+			total=quiz1+quiz2+mid+f;
+			cout<<"The total score of student name "<<tempName<<" is "<<total<<endl;
+		}
+	}
+}
+
+
+void selectSeven(){	//Display the highest and lowest scores
+	float largest = myStudent[0].getTotal();
+	float smallest = myStudent[0].getTotal();
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		for(int s=0; s<myStudent.size(); s++){
+			if(myStudent[0].getTotal()<myStudent[s].getTotal()){
+				largest = myStudent[s].getTotal();
+			}
+		}
+		for(int s=0; s<myStudent.size(); s++){
+			if(largest==myStudent[s].getTotal()){
+				n=myStudent[s].getName();
+			}
+		}
+		cout<<n<<" is the highest total score in a class with the total score of "<<largest<<endl;
+		for(int s=0; s<myStudent.size(); s++){
+			if(myStudent[0].getTotal()>myStudent[s].getTotal()){
+				smallest = myStudent[s].getTotal();
+			}
+		}
+		for(int s=0; s<myStudent.size(); s++){
+			if(smallest==myStudent[s].getTotal()){
+				n=myStudent[s].getName();
+			}
+		}
+		cout<<n<<" is the lowest total score in a class with the total score of "<<smallest<<endl;
+	}
+}
+
+
+void selectEight(){	//Sort students’ records by ID
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		sort(myStudent.begin(), myStudent.end());
+		cout<<"All student has successfully sorted by ID"<<endl;
+	}
+}
+
+
+void selectNine(){	//Sort students' records by total score
+	if(myStudent.size()==0){
+		noStudent();
+	}
+	else{
+		sort(myStudent.begin(), myStudent.end());
+		cout<<"All student has successfully sorted by total"<<endl;
+	}
+}
+
+
+void fileStore(){	//file handling
+	ofstream records;
+	int place;
+	records.open("StudentRecords.txt");
+	if(myStudent.size()==0){
+		records<<"############################"<<endl;
+		records<<"#No students in the records#"<<endl;
+		records<<"############################"<<endl;
+	}
+	else{
+		records<<"#################"<<endl;
+		records<<"#Student Records#"<<endl;
+		records<<"#################"<<endl<<endl<<endl<<endl;
+		records<<"#############################################"<<endl;
+		for(int s=0; s<myStudent.size(); s++){
+			place=s+1;
+			n=myStudent[s].getName();
+			records<<"Student no."<<place<<" Name: "<<n<<endl;
+			i=myStudent[s].getId();
+			records<<"Student ID: "<<i<<endl;
+			g=myStudent[s].getGender();
+			records<<"Gender: "<<g<<endl;
+			quiz1=myStudent[s].getQuizOne();
+			records<<"First Quiz score: "<<quiz1<<endl;
+			quiz2=myStudent[s].getQuizTwo();
+			records<<"Second Quiz score: "<<quiz2<<endl;
+			mid=myStudent[s].getMidterm();
+			records<<"Midterm score: "<<mid<<endl;
+			f=myStudent[s].getFinal();
+			records<<"Final score: "<<f<<endl;
+			t=myStudent[s].getTotal();
+			records<<"Total score: "<<t<<endl;
+			average=myStudent[s].getAverage();
+			records<<"Average score: "<<average<<endl;
+			records<<"#############################################"<<endl;
+		}
+		records.close();
+	}
+}
+
+
+void noStudent(){	//if no student output
+	cout<<"No students in the records"<<endl;
+}
+
+
+void invalid(){	//if incorrect student ID
+	cout<<"Invalid Student ID"<<endl;
+}
